@@ -59,14 +59,16 @@ export default class extends Component {
             })
             return
         }
+        const localhost = '181.51.34.247'
         this.request({
-            url      : 'http://localhost:3000/api/validateTurn',
+            url      : `http://${localhost}:3000/api/turnDetails`,
             method   : 'POST',
             body     : {
                 cc    : turnInfo.cc,
                 turn  : turnInfo.turn
             },
             callback : (response) => {
+                console.log('response', response)
                 if(!response.state) {
                     this.showAlert({
                         title : 'No se pudo validar la autenticidad del turno escaneado',
@@ -74,22 +76,7 @@ export default class extends Component {
                     })
                     return
                 }
-                if(!response.text)
-                this.request({
-                    url    : 'http://localhost:3000/api/api/turn',
-                    method : 'GET',
-                    body   : {turn: turnInfo.turn},
-                    callback : (response) => {
-                        if(!response.state) {
-                            this.showAlert({
-                                title: 'No se pudo obtener información del turno escaneado',
-                                text: response.text
-                            })
-                            return
-                        }
-                        console.log('INFORMACIÓN DEL TURNO', response.text)
-                    }
-                })
+                this.props.navigation.navigate('Turn', JSON.parse(response.text))
             }
         })
     }
